@@ -5,11 +5,11 @@
 % addpath(genpath('/autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/'))      
 
 restoredefaultpath
-addpath(genpath('/autofs/cluster/berkin/berkin/Matlab_Code_New/LIBRARY'))
+addpath(genpath('library'))
 
 close all
 
-data_path = '/autofs/space/daisy_001/users/berkin/2026_07_08_bay1_ares_phantom_zoom_rigidcoil/zoom/';
+data_path = 'data/';
 data_path_tsnr = '/autofs/space/daisy_001/users/berkin/2026_07_08_bay1_ares_phantom_zoom_rigidcoil/switch/';
 
 use_tsnr = 0;
@@ -174,9 +174,9 @@ end
 % load trajectory for regridding
 %--------------------------------------------------------------------------
 
-addpath /cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ARES_zoom_fmri/pulseq-1.5.0/matlab/
+addpath ../sequence/external/pulseq/matlab/
 
-traj_path = '/autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ARES_zoom_fmri/07-Jul-2026/';
+traj_path = 'trajectory/';
 
 filename_traj = ['_traj_1mm_trajectory_RyxRz_', num2str(Ry), 'x', num2str(Rz), 'del', num2str(caipiShiftZ), '_pf', num2str(pf_ky)];
 
@@ -281,8 +281,8 @@ imagesc3d2( rsos(img_epi_imaging,4), s(img_epi_imaging)/2, 13, [90,90,-90], [0,1
 % k-space based ghost correction
 %--------------------------------------------------------------------------
 
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/BUDA/fleet_buda
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/BUDA/fleet_buda/mrir_toolbox
+addpath fleet_buda
+addpath fleet_buda/mrir_toolbox
 
 %   dimension 08: Segments
 %   dimension 10: Partitions
@@ -335,12 +335,14 @@ imagesc3d2( rsos(navCor_img,3), s(img_epi_imaging)/2, 14, [90,90,-90], [0,1.5e-4
 % save as nifti
 %--------------------------------------------------------------------------
 
-addpath(genpath('/autofs/cluster/berkin/berkin/Matlab_Code_New/LIBRARY'))
+addpath(genpath('library'))
 
-navCor_img_tsnr_rsos = sq(rsos(navCor_img_tsnr,3));
+if use_tsnr
+    navCor_img_tsnr_rsos = sq(rsos(navCor_img_tsnr,3));
 
-for t = 1:5:num_runs
-    imagesc3d2( navCor_img_tsnr_rsos(:,:,:,t), s(navCor_img_tsnr_rsos)/2, t, [90,90,-90], [0,2.e-4], [], 'tsnr mean ghost corr and regridding'), setGcf(.5)
+    for t = 1:5:num_runs
+        imagesc3d2( navCor_img_tsnr_rsos(:,:,:,t), s(navCor_img_tsnr_rsos)/2, t, [90,90,-90], [0,2.e-4], [], 'tsnr mean ghost corr and regridding'), setGcf(.5)
+    end
 end
 
 imagesc3d2( rsos(navCor_img,3), s(navCor_img)/2, 11, [90,90,-90], [0,2.e-4], [], 'ghost corr and regridding'), setGcf(.5)
