@@ -1,0 +1,13 @@
+# Outputs written by the sequence scripts (run from sequence/)
+sequence/[0-9][0-9]-[A-Z][a-z][a-z]-[0-9][0-9][0-9][0-9]/
+*.seq
+*.mat
+
+# Siemens gradient-system files (MP_GPA_*.asc) are vendor-confidential.
+# Keep them outside the repository.
+*.asc
+
+# MATLAB / Python artifacts
+*.asv
+*.m~
+__pycache__/

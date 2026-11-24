@@ -1,0 +1,19 @@
+[submodule "sequence/external/pulseq"]
+	path = sequence/external/pulseq
+	url = https://github.com/pulseq/pulseq.git
+[submodule "sequence/external/toppe"]
+	path = sequence/external/toppe
+	url = https://github.com/toppeMRI/toppe.git
+[submodule "sequence/external/PulCeq"]
+	path = sequence/external/PulCeq
+	url = https://github.com/HarmonizedMRI/PulCeq.git
+[submodule "sequence/external/SMS-EPI"]
+	path = sequence/external/SMS-EPI
+	url = https://github.com/HarmonizedMRI/SMS-EPI.git
+[submodule "sequence/external/3DEPI"]
+	path = sequence/external/3DEPI
+	url = https://github.com/HarmonizedMRI/3DEPI.git
+	ignore = untracked
+[submodule "sequence/external/safe_pns_prediction"]
+	path = sequence/external/safe_pns_prediction
+	url = https://github.com/filip-szczepankiewicz/safe_pns_prediction.git
