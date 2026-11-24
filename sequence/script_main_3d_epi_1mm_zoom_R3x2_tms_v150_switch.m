@@ -5,15 +5,15 @@
 clear
 restoredefaultpath
 
-addpath /cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ARES_zoom_fmri/pulseq-1.5.0/matlab/
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ARES_zoom_fmri
+addpath external/pulseq/matlab/
+addpath ./
 
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/toppe-main
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/SMS-EPI-develop/sequence/Pulseq/
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/PulCeq-main/matlab/
+addpath external/toppe
+addpath external/SMS-EPI/sequence/Pulseq/
+addpath external/PulCeq/matlab/
 
 
-caipiPythonPath = '/autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/3DEPI-main/caipi/';
+caipiPythonPath = 'external/3DEPI/caipi/';
 
 
 %--------------------------------------------------------------------------
@@ -120,7 +120,7 @@ use_gre_acs = 0;          % set to 0 to disable gre acs refscan
 
 
 % directory to save seq file to:
-seq_path = ['/autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ARES_zoom_fmri/', datestr(datetime('today')), '/' ];
+seq_path = [pwd, '/', datestr(datetime('today')), '/' ];
 
 if ~isfolder(seq_path)
     mkdir(seq_path)
@@ -217,7 +217,7 @@ title('evolution of labels/counters');
 %% check gradient spectrum
 %--------------------------------------------------------------------------
 
-addpath '/autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/utils'
+addpath 'utils'
 
 % sys_type = 'prisma';
 % sys_type = 'Connectome2';
@@ -240,7 +240,7 @@ disp(['esp: ', num2str(esp*1e3), ' main epi frequency: ', num2str(freq_main)])
 %% check pns
 %--------------------------------------------------------------------------
 
-addpath /autofs/cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/safe_pns_prediction-master/
+addpath external/safe_pns_prediction/
 
 
 if strcmp(sys_type,'prisma')
@@ -269,7 +269,7 @@ end
 %% generate single TR imaging data scan for loading the trajectory
 %--------------------------------------------------------------------------
 
-addpath /cluster/berkin/berkin/Matlab_Code_New/PULSEQ/ISMRM-Virtual-Meeting--November-15-17-2023-main/tutorials/day2_SMS-EPI/
+addpath ./
 
 nDummyFrames = 0;
 nFrames = 1;            % first frame is used for ghost correction if 'doRefScan' is true

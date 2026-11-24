@@ -209,9 +209,9 @@ pyFile = [arg.caipiPythonPath 'skippedcaipi_sampling.py'];
 
 
 % BB Hack: use the created python environment from vs code
-pyCmd = sprintf('/cluster/berkin/berkin/miniconda/install/envs/skip_caipi_env/bin/python %s %d %d %d %d %d %d', pyFile, ny, nz, Ry, Rz, caipiShiftZ, 1);
+% pyCmd = sprintf('/cluster/berkin/berkin/miniconda/install/envs/skip_caipi_env/bin/python %s %d %d %d %d %d %d', pyFile, ny, nz, Ry, Rz, caipiShiftZ, 1);
 
-% pyCmd = sprintf('python3 %s %d %d %d %d %d %d', pyFile, ny, nz, Ry, Rz, caipiShiftZ, 1);
+pyCmd = sprintf('python3 %s %d %d %d %d %d %d', pyFile, ny, nz, Ry, Rz, caipiShiftZ, 1);
 
 
 if system(pyCmd) ~= 0
