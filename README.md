@@ -3,7 +3,8 @@
 MATLAB/[Pulseq](https://pulseq.github.io/) code that generates a 1 mm isotropic
 3D-EPI fMRI sequence with a reduced (zoomed) field of view. The sequence also
 emits digital trigger outputs for synchronizing transcranial magnetic
-stimulation (TMS) hardware with the acquisition.
+stimulation (TMS) hardware with the acquisition. A reconstruction script and an
+example phantom dataset are included.
 
 ## Repository layout
 
@@ -15,11 +16,18 @@ sequence/
 ├── utils/gradSpectrum_bb.m                               gradient spectrum vs. forbidden frequencies
 ├── requirements.txt                                      Python packages for the CAIPI pattern
 └── external/                                             pinned third-party submodules
+recon/
+├── script_recon_3d_epi_1mm_bay1_R3x2Zoom_phantom_tSNR_20260708_switch.m   recon script (run this)
+├── trajectory/                                           single-TR sequence used for regridding
+├── data/                                                 put the raw .dat here (git-ignored)
+├── library/                                              mapVBVD2 reader and small helpers
+└── fleet_buda/                                           EPI ghost correction (with mrir_toolbox/)
 ```
 
 ## Requirements
 
-- MATLAB with the Signal Processing Toolbox and the Curve Fitting Toolbox.
+- MATLAB with the Signal Processing Toolbox and the Curve Fitting Toolbox
+  (sequence) and the Image Processing Toolbox (recon display).
   Tested with R2024b and R2026a.
 - Python 3, available as `python3` on the `PATH` that MATLAB's `system()`
   sees, with numpy, scipy and matplotlib. Verified with Python 3.9.25,
@@ -132,6 +140,63 @@ fat-saturation RF shape can differ in the last printed digit (about 1e-9 of the
 peak), so the `.seq` signature hash can differ even though the sequences are
 functionally identical.
 
+## Reconstruction
+
+### Example data
+
+The example dataset is a phantom scan from 8 July 2026, acquired with a 3 kHz
+RF frequency offset and a 6 A drive current (both encoded in the file name). It
+contains a ghost-reference frame (phase-encoding blips off) followed by one
+imaging frame, both with Ry = Rz = 1. The raw Siemens file (558 MB) is attached
+to the [`data-v1` release](https://github.com/berkinbilgic/zoom-epi/releases/tag/data-v1):
+
+```bash
+cd zoom-epi/recon/data
+curl -LO https://github.com/berkinbilgic/zoom-epi/releases/download/data-v1/meas_MID00706_FID82492_pulseq_v150_EPI_RF3kHz_6A_opt.dat
+sha256sum meas_MID00706_FID82492_pulseq_v150_EPI_RF3kHz_6A_opt.dat
+# 8bfa3a026947075a52ffa408d3b7f17dc9be08091e3bc49ee9946814ce1bf2f8
+```
+
+### Running
+
+In MATLAB, change the current folder to `zoom-epi/recon` and run the first
+section of `script_recon_3d_epi_1mm_bay1_R3x2Zoom_phantom_tSNR_20260708_switch.m`
+(about a minute). All paths in the script are relative to `recon/`, and it uses
+the Pulseq submodule under `sequence/external/`. The first section:
+
+1. reads the raw data with `mapVBVD2` and splits it into the reference and
+   imaging frames;
+2. regrids each ramp-sampled readout onto a uniform kx grid (spline
+   interpolation), using the k-space trajectory of the single-TR sequence in
+   `trajectory/`, which the trajectory section of the sequence script also
+   produces;
+3. removes Nyquist ghosts in k-space with the reference frame (correlation
+   method, `fleet_buda/`);
+4. displays the root-sum-of-squares image of `navCor_img` (260 × 66 × 64,
+   keeping all 260 readout samples).
+
+Nothing is written to disk. The NIfTI export line is commented out.
+
+### Limitations
+
+- The script keeps `use_tsnr = 0`. With `use_tsnr = 1` it also reconstructs a
+  30-run time series, which is not provided.
+- The later sections (ESPIRiT, zero-filling, LSQR) need a zero-padded GRE ACS
+  image (`img_acs_pad`) and coil sensitivity maps, which this script does not
+  compute for this dataset. Their toolboxes are not included, and their
+  `addpath` lines still point to the original cluster locations. Because the
+  example data are fully sampled, the first section's RSOS image is the
+  reconstruction.
+
+### Reproducibility
+
+In a given MATLAB environment, the recon in this repository gives results
+identical to the working-directory code it was taken from (ghost-corrected
+k-space and RSOS image, checked in R2026a). The MATLAB version changes the
+output slightly: R2024b and R2026a differ by up to 2.9e-4 of the image peak.
+In R2024b the code reproduces the original 8 July 2026 result to within
+single-precision rounding.
+
 ## Third-party code
 
 Each toolbox is a git submodule pinned to the commit whose files match the
@@ -153,7 +218,17 @@ with Pulseq* (November 15–17, 2023;
 uses the skipped-CAIPI code of R. Stirnberg; see Stirnberg & Stöcker, *Magn
 Reson Med* 2021;85:1540–1551, https://doi.org/10.1002/mrm.28486.
 
+The recon includes copies of these files, unchanged from the versions it was
+developed with:
+
+| Path (`recon/`) | Author | Notes |
+|---|---|---|
+| `library/mapVBVD2/` | Philipp Ehses | Siemens raw-data reader, a variant of [pehses/mapVBVD](https://github.com/pehses/mapVBVD) (MIT, see its `LICENSE`) |
+| `fleet_buda/mrir_toolbox/` | Jonathan Polimeni | `mrir_*` ghost-correction and DFT functions |
+
 ## License
 
-The code outside `sequence/external/` is released under the MIT License (see
-[LICENSE](LICENSE)). Each submodule is covered by its own upstream license.
+The code outside `sequence/external/`, `recon/library/mapVBVD2/` and
+`recon/fleet_buda/mrir_toolbox/` is released under the MIT License (see
+[LICENSE](LICENSE)). Each submodule is covered by its own upstream license, and
+the vendored files listed above remain under their authors' terms.
